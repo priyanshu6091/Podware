@@ -5,7 +5,7 @@ import { ErrorBoundary } from './components/auth/ErrorBoundary';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { Home } from './components/user/Home';
-import { Discover } from './components/user/Discover';
+import { DiscoverPodcasts } from './components/discover/DiscoverPodcasts';  // Updated route
 import { Learn } from './components/user/Learn';
 import { Rewards } from './components/user/Rewards';
 import { Favorites } from './components/user/Favorites';
@@ -15,7 +15,6 @@ import { SignUp } from './pages/auth/SignUp';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
 import { AdminView } from './pages/admin/AdminView';
-// import { UserView } from './pages/user/UserDashboard';
 import { PodcasterView } from './pages/podcaster/PodcasterView';
 import { AnalyticsPanel } from './components/admin/AnalyticsPanel';
 import { AnalyticsPanelPodcaster } from './components/podcaster/AnalyticsPanel';
@@ -29,7 +28,8 @@ import { ContentModerationPanel } from './components/admin/ContentModerationPane
 import { PlatformSettingsPanel } from './components/admin/PlatformSettingsPanel';
 import { RevenueManagementPanel } from './components/admin/RevenueManagementPanel';
 import { SupportPanel } from './components/admin/SupportPanel';
-
+import { ChannelPage } from './pages/ChannelPage';
+import { Discover } from './components/user/Discover';
 function AppRoutes() {
   const { user, loading, fetchUser } = useAuth();
 
@@ -64,7 +64,9 @@ function AppRoutes() {
   return (
     <div className="min-h-screen bg-gray-50">
       {user && <Header />}
-      {user && <Sidebar />}
+      {user && <Sidebar sidebarOpen={false} toggleSidebar={function (): void {
+        throw new Error('Function not implemented.');
+      } } />}
       <main className={user ? 'lg:pl-64 pt-16' : ''}>
         <Routes>
           {/* Auth Routes */}
@@ -76,7 +78,6 @@ function AppRoutes() {
 
           {/* Admin Routes */}
           <Route path="/admin" element={user?.role === 'Admin' ? <AdminView /> : <Navigate to="/signin" />} />
-          <Route path="/admin" element={<AdminView />} />
           <Route path="/admin/users" element={<UserManagementPanel />} />
           <Route path="/admin/content" element={<ContentModerationPanel />} />
           <Route path="/admin/revenue" element={<RevenueManagementPanel />} />
@@ -92,16 +93,19 @@ function AppRoutes() {
           <Route path="/podcaster/engagement" element={<EngagementPanel />} />
           <Route path="/podcaster/settings" element={<ProfileSettingsPanel />} />
           <Route path="/podcaster/live" element={<LiveSessionPanel />} />
-          
+
           {/* User Routes */}
           <Route path="/user" element={user ? <Home /> : <Navigate to="/signin" />} />
-          <Route path="/user/discover" element={user ? <Discover /> : <Navigate to="/signin" />} />
+          <Route path="/user/discover" element={user ? <Discover /> : <Navigate to="/signin" />} />  {/* Updated route */}
           <Route path="/user/learn" element={user ? <Learn /> : <Navigate to="/signin" />} />
           <Route path="/user/rewards" element={user ? <Rewards /> : <Navigate to="/signin" />} />
           <Route path="/user/favorites" element={user ? <Favorites /> : <Navigate to="/signin" />} />
           <Route path="/user/history" element={user ? <History /> : <Navigate to="/signin" />} />
           <Route path="/profile" element={user ? <Profile /> : <Navigate to="/signin" />} />
           <Route path="/settings" element={user ? <Settings /> : <Navigate to="/signin" />} />
+
+
+          <Route path="/channels/:id" element={<ChannelPage />} />
         </Routes>
       </main>
     </div>

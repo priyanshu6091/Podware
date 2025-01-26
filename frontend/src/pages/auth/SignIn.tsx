@@ -4,6 +4,10 @@ import { AuthForm } from '../../components/auth/AuthForm';
 import { Headphones } from 'lucide-react';
 
 export function SignIn() {
+  const handleGoogleSignIn = () => {
+    window.location.href = 'http://localhost:5000/api/auth/google';
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -22,8 +26,14 @@ export function SignIn() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 space-y-4">
           <AuthForm mode="signin" />
+          <button
+            onClick={handleGoogleSignIn}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+          >
+            Sign in with Google
+          </button>
         </div>
       </div>
     </div>

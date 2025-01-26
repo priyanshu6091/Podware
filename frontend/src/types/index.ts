@@ -19,16 +19,25 @@ export interface Question {
   };
 }
 
-export interface PodcastEpisode {
+export interface Podcast {
+  videoUrl: any;
+  audioUrl: any;
+  categories: any;
   id: string;
   title: string;
-  description: string;
   host: string;
   thumbnail: string;
   duration: string;
   likes: number;
+  description?: string;
+  category?: string;
+}
+
+// Updated PodcastEpisode to extend Podcast
+export interface PodcastEpisode extends Podcast {
   chapters: Chapter[];
   isLive: boolean;
+  videoUrl: string;
 }
 
 export interface Chapter {
@@ -48,20 +57,4 @@ export interface Reel {
   episodeId: string;
   timestamp: number;
   tags: string[];
-}
-export interface Podcast {
-  id: string;
-  title: string;
-  host: string;
-  thumbnail: string;
-  duration: string;
-  likes: number;
-  description?: string;
-  category?: string;
-}
-
-// Update the existing PodcastEpisode interface to extend Podcast
-export interface PodcastEpisode extends Podcast {
-  chapters: Chapter[];
-  isLive: boolean;
 }

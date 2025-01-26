@@ -1,61 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DiscoverSearch } from '../discover/DiscoverSearch';
 import { CategoryList } from '../discover/CategoryList';
-import { TrendingSection } from '../discover/TrendingSection';
+import axios from 'axios';
 import type { Podcast } from '../../types/index';
+import { ChannelList } from '../../components/discover/ChannelList';
+import { VideoPlayer } from '../videoplayer/VideoPlayer';
 
 export function Discover() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>();
+  const [podcasts, setPodcasts] = useState<Podcast[]>([]);
 
-  const categories = [
-    'Technology',
-    'Business',
-    'Health',
-    'Education',
-    'Entertainment',
-    'Science',
-    'Arts',
-    'Sports'
-  ];
+  useEffect(() => {
+    const fetchPodcasts = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/podcasts/all');
+        setPodcasts(response.data.podcasts || []);
+      } catch (error) {
+        console.error('Error fetching podcasts:', error);
+      }
+    };
 
-  const trendingPodcasts: Podcast[] = [
-    {
-      id: '1',
-      title: "AI Revolution Weekly",
-      host: "Tech Trends",
-      thumbnail: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1000",
-      duration: "40 min",
-      likes: 2345,
-      category: 'Technology',
-    },
-    {
-      id: '2',
-      title: "Global Economics Today",
-      host: "Market Watch",
-      thumbnail: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1000",
-      duration: "35 min",
-      likes: 1456,
-      category: 'Business',
-    },
-    {
-      id: '3',
-      title: "Mindful Leadership",
-      host: "Growth Mindset",
-      thumbnail: "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&w=1000",
-      duration: "30 min",
-      likes: 987,
-      category: 'Education',
-    },
-  ];
+    fetchPodcasts();
+  }, []);
 
-  // Filter trending podcasts based on search query and category
-  const filteredPodcasts = trendingPodcasts.filter((podcast) => {
+  const filteredPodcasts = podcasts.filter((podcast) => {
     const matchesQuery = searchQuery
       ? podcast.title.toLowerCase().includes(searchQuery.toLowerCase())
       : true;
     const matchesCategory = selectedCategory
-      ? podcast.category === selectedCategory
+      ? podcast.categories.includes(selectedCategory)
       : true;
 
     return matchesQuery && matchesCategory;
@@ -72,18 +46,43 @@ export function Discover() {
         <p className="text-gray-600">Find your next favorite podcast</p>
       </div>
 
-      <DiscoverSearch
-        value={searchQuery}
-        onChange={setSearchQuery}
-      />
+      {/* Channel List */}
+      <ChannelList />
 
+      {/* Search Bar */}
+      <DiscoverSearch value={searchQuery} onChange={setSearchQuery} />
+
+      {/* Categories */}
       <CategoryList
-        categories={categories}
+        categories={['Technology', 'Business', 'Health', 'Education']}
         selectedCategory={selectedCategory}
         onCategorySelect={handleCategorySelect}
       />
 
-      <TrendingSection podcasts={filteredPodcasts} />
+      {/* Podcast List with Video/Audio Players */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+        {filteredPodcasts.map((podcast) => (
+          <div key={podcast.id} className="bg-white shadow-lg rounded-lg p-4">
+            <h2 className="font-semibold text-lg mb-2">{podcast.title}</h2>
+            <p className="text-sm text-gray-600 mb-4">{podcast.description}</p>
+
+            {/* Render VideoPlayer if videoUrl exists, otherwise render audio */}
+            {podcast.videoUrl ? (
+              <VideoPlayer url={`http://localhost:5000${podcast.videoUrl}`} />
+            ) : podcast.audioUrl ? (
+              <audio controls className="w-full">
+                <source
+                  src={`http://localhost:5000${podcast.audioUrl}`}
+                  type={`audio/${podcast.audioUrl.split('.').pop()}`}
+                />
+                Your browser does not support the audio element.
+              </audio>
+            ) : (
+              <p>No media available.</p>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

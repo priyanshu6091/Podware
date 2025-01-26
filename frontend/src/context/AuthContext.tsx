@@ -24,31 +24,22 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
   const [role, setRole] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {
     const token = localStorage.getItem('token');
-    console.log('Token:', token);
     if (!token) {
-      console.log('No token found');
       setLoading(false);
       return;
     }
-    
-    
+
     try {
-     
       const response = await axios.get('http://localhost:5000/api/auth/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("a");
-      console.log('User data:', response.data);
       setUser(response.data);
-      setRole(response.data.role); // Set the role from backend response
+      setRole(response.data.role);
     } catch (error) {
-      
       console.error('Error fetching user:', error);
       localStorage.removeItem('token');
       setUser(null);
@@ -67,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = response.data.token;
     localStorage.setItem('token', token);
     setUser(response.data.user);
-    setRole(role); // Save role on sign-in
+    setRole(role);
   };
 
   const signOut = () => {
@@ -87,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = response.data.token;
     localStorage.setItem('token', token);
     setUser(response.data.user);
-    setRole(role); // Save role on sign-up
+    setRole(role);
   };
 
   return (
