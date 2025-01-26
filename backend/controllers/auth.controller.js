@@ -40,17 +40,15 @@ exports.signUp = async (req, res) => {
 
 exports.signIn = async (req, res) => {
     const { email, password, role } = req.body;
-    console.log(req.body);
+
     if (!models[role]) {
         return res.status(400).json({ message: 'Invalid role provided.' });
     }
 
     const Model = models[role];
-    console.log(Model)
 
     try {
         const user = await Model.findOne({ email }).select('+password');
-        console.log(user)   
         if (!user || !(await user.comparePassword(password))) {
             return res.status(401).json({ message: 'Invalid email or password.' });
         }
@@ -60,7 +58,7 @@ exports.signIn = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error signing in', error });
     }
-}; 
+};
 
 exports.getCurrentUser = async (req, res) => {
     if (!req.user) {
@@ -84,7 +82,6 @@ exports.updateUserProfile = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Check if metadata exists
         if (!user.metadata) {
             user.metadata = {}; // Initialize metadata if missing
         }
@@ -97,40 +94,13 @@ exports.updateUserProfile = async (req, res) => {
         await user.save();
         res.status(200).json({ message: 'Profile updated successfully', user });
     } catch (error) {
-        console.error('Error updating user profile:', error); // Log the error
         res.status(500).json({ message: 'Error updating profile', error });
     }
 };
 
-exports.changePassword = async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
-
-    if (!models[req.user.role]) {
-        return res.status(400).json({ message: 'Invalid role provided.' });
-    }
-
-    const Model = models[req.user.role];
-
-    try {
-        const user = await Model.findById(req.user._id).select('+password');
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const isMatch = await user.comparePassword(currentPassword);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Current password is incorrect' });
-        }
-
-        if (newPassword.length < 8) {
-            return res.status(400).json({ message: 'Password must be at least 8 characters long.' });
-        }
-
-        user.password = await Model.hashPassword(newPassword);
-        await user.save();
-
-        res.status(200).json({ message: 'Password changed successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error changing password', error });
-    }
+// Google OAuth callback
+exports.googleCallback = (req, res) => {
+    // Generate JWT for authenticated user
+    const token = jwt.sign({ _id: req.user._id, role: req.user.role }, 'podware', { expiresIn: '24h' });
+    res.redirect(`http://localhost:5173?token=${token}`); // Redirect to the frontend with token
 };

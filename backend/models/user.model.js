@@ -14,11 +14,14 @@ const userSchema = new mongoose.Schema({
         location: { type: String, default: '' },
         avatar_url: { type: String, default: '' },
     },
+    description: { type: String }, // Channel description for podcasters
+    banner: { type: String }, // Banner image for the channel
+    subscribers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // List of subscribers
 });
 
 userSchema.methods.generateAuthToken = function () {
     return jwt.sign(
-        { id: this._id, role: 'User' },
+        { id: this._id, role: this.role },
         'podware',
         { expiresIn: '24h' }
     );

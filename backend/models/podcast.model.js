@@ -1,11 +1,16 @@
+// models/podcast.model.js
 const mongoose = require('mongoose');
 
-const podcastSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    description: { type: String },
-    creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User ', required: true },
-    episodes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Episode' }],
-    createdAt: { type: Date, default: Date.now }
+const PodcastSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  audioUrl: { type: String },
+  videoUrl: { type: String }, // Add video URL field
+  thumbnailUrl: { type: String },
+  duration: { type: String },
+  categories: { type: [String] },
+  uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Podcaster', required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Podcast', podcastSchema);
+module.exports = mongoose.model('Podcast', PodcastSchema);
