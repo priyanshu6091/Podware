@@ -3,7 +3,6 @@ import { DiscoverSearch } from '../discover/DiscoverSearch';
 import { CategoryList } from '../discover/CategoryList';
 import axios from 'axios';
 import type { Podcast } from '../../types/index';
-import { ChannelList } from '../../components/discover/ChannelList';
 import { VideoPlayer } from '../videoplayer/VideoPlayer';
 
 export function Discover() {
@@ -45,9 +44,6 @@ export function Discover() {
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Discover</h1>
         <p className="text-gray-600">Find your next favorite podcast</p>
       </div>
-
-      {/* Channel List */}
-      <ChannelList />
 
       {/* Search Bar */}
       <DiscoverSearch value={searchQuery} onChange={setSearchQuery} />

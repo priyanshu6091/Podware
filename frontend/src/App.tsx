@@ -30,6 +30,7 @@ import { RevenueManagementPanel } from './components/admin/RevenueManagementPane
 import { SupportPanel } from './components/admin/SupportPanel';
 import { ChannelPage } from './pages/ChannelPage';
 import { Discover } from './components/user/Discover';
+
 function AppRoutes() {
   const { user, loading, fetchUser } = useAuth();
 

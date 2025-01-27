@@ -20,6 +20,7 @@ export function VideoPlayer({ url }: VideoPlayerProps) {
             attributes: { type: 'video/x-matroska' } // MKV MIME type
           }
         }}
+        onError={(e) => console.error('Error playing video:', e)}
       />
     </div>
   );
