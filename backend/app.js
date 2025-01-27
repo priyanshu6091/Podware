@@ -9,7 +9,6 @@ const episodeRoutes = require('./routes/episode.routes');
 const rewardRoutes = require('./routes/reward.routes');
 const questionRoutes = require('./routes/question.routes');
 const reelRoutes = require('./routes/reel.routes');
-const channelRoutes = require('./routes/channel.routes');
 const dotenv = require('dotenv')
 const cors = require('cors');
 const path = require('path');
@@ -31,14 +30,21 @@ const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/podwareBa
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
-app.use('/api/channels', channelRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/podcasts', podcastRoutes);
 app.use('/api/episodes', episodeRoutes);
 app.use('/api/rewards', rewardRoutes);
 app.use('/api/questions', questionRoutes);
-app.use('/api/reels', reelRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/reels', reelRoutes);app.use(
+    '/uploads',
+    express.static(path.join(__dirname, 'uploads'), {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.mkv')) {
+          res.setHeader('Content-Type', 'video/x-matroska');
+        }
+      },
+    })
+  );
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
