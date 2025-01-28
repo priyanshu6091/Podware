@@ -32,7 +32,7 @@ import { SupportPanel } from './components/admin/SupportPanel';
 import { ChannelPage } from './pages/ChannelPage';
 import { Discover } from './components/user/Discover';
 import { PodcasterProfile } from './pages/podcaster/PodcasterProfile';
-
+import { VideoPlayerPage } from './pages/VideoPlayerPage';
 function AppRoutes() {
   const { user, loading, fetchUser } = useAuth();
 
@@ -107,7 +107,7 @@ function AppRoutes() {
           <Route path="/user/history" element={user ? <History /> : <Navigate to="/signin" />} />
           <Route path="/profile" element={user ? <Profile /> : <Navigate to="/signin" />} />
           <Route path="/settings" element={user ? <Settings /> : <Navigate to="/signin" />} />
-
+          <Route path="/video/:videoId" element={<VideoPlayerPage />} />
           <Route path="/channels/:id" element={<ChannelPage />} />
         </Routes>
       </main>

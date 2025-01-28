@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { PodcastCard } from '../../components/podcast/PodcastCard';
 import { User, Podcast } from '../../types/index';
-
+import { Link } from 'react-router-dom';
 export function PodcasterProfile() {
   const { id } = useParams<{ id: string }>();
   const [podcaster, setPodcaster] = useState<User | null>(null);
@@ -43,9 +43,11 @@ export function PodcasterProfile() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {podcasts.map((podcast) => (
-          <PodcastCard host={''} thumbnail={''} likes={0} key={podcast._id} {...podcast} />
-        ))}
+      {podcasts.map((podcast) => (
+        <Link to={`/video/${podcast._id}`} key={podcast._id}>
+        <PodcastCard host={''} thumbnail={''} likes={0} {...podcast} />
+        </Link>
+))}
       </div>
     </div>
   );
