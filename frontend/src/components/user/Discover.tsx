@@ -1,34 +1,38 @@
+// components/user/Discover.tsx
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import { DiscoverSearch } from '../discover/DiscoverSearch';
 import { CategoryList } from '../discover/CategoryList';
-import axios from 'axios';
-import type { Podcast } from '../../types/index';
-import { VideoPlayer } from '../videoplayer/VideoPlayer';
+import { PodcastCard } from '../podcast/PodcastCard';
+import { User, Podcast } from '../../types/index';
 
 export function Discover() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>();
-  const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [podcasters, setPodcasters] = useState<User[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPodcasts = async () => {
+    const fetchPodcasters = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/podcasts/all');
-        setPodcasts(response.data.podcasts || []);
+        const response = await axios.get<User[]>('http://localhost:5000/api/podcasters');
+        setPodcasters(response.data || []);
       } catch (error) {
-        console.error('Error fetching podcasts:', error);
+        console.error('Error fetching podcasters:', error);
       }
     };
 
-    fetchPodcasts();
+    fetchPodcasters();
   }, []);
 
-  const filteredPodcasts = podcasts.filter((podcast) => {
+  const filteredPodcasters = podcasters.filter((podcaster) => {
     const matchesQuery = searchQuery
-      ? podcast.title.toLowerCase().includes(searchQuery.toLowerCase())
+      ? podcaster.fullname.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        podcaster.fullname.lastname.toLowerCase().includes(searchQuery.toLowerCase())
       : true;
     const matchesCategory = selectedCategory
-      ? podcast.categories.includes(selectedCategory)
+      ? podcaster.podcasts.some((podcast) => podcast.categories.includes(selectedCategory))
       : true;
 
     return matchesQuery && matchesCategory;
@@ -42,7 +46,7 @@ export function Discover() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Discover</h1>
-        <p className="text-gray-600">Find your next favorite podcast</p>
+        <p className="text-gray-600">Find your next favorite podcaster</p>
       </div>
 
       {/* Search Bar */}
@@ -55,27 +59,14 @@ export function Discover() {
         onCategorySelect={handleCategorySelect}
       />
 
-      {/* Podcast List with Video/Audio Players */}
+      {/* Podcaster List with Podcasts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-        {filteredPodcasts.map((podcast) => (
-          <div key={podcast.id} className="bg-white shadow-lg rounded-lg p-4">
-            <h2 className="font-semibold text-lg mb-2">{podcast.title}</h2>
-            <p className="text-sm text-gray-600 mb-4">{podcast.description}</p>
-
-            {/* Render VideoPlayer if videoUrl exists, otherwise render audio */}
-            {podcast.videoUrl ? (
-              <VideoPlayer url={`http://localhost:5000${podcast.videoUrl}`} />
-            ) : podcast.audioUrl ? (
-              <audio controls className="w-full">
-                <source
-                  src={`http://localhost:5000${podcast.audioUrl}`}
-                  type={`audio/${podcast.audioUrl.split('.').pop()}`}
-                />
-                Your browser does not support the audio element.
-              </audio>
-            ) : (
-              <p>No media available.</p>
-            )}
+        {filteredPodcasters.map((podcaster) => (
+          <div key={podcaster._id} className="bg-white shadow-lg rounded-lg p-4">
+            <Link to={`/podcasters/${podcaster._id}`}>
+              <h2 className="font-semibold text-lg mb-2">{podcaster.fullname.firstname} {podcaster.fullname.lastname}</h2>
+              <p className="text-sm text-gray-600 mb-4">{podcaster.metadata.bio}</p>
+            </Link>
           </div>
         ))}
       </div>

@@ -1,11 +1,12 @@
+// App.tsx
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ErrorBoundary } from './components/auth/ErrorBoundary';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { Home } from './components/user/Home';
-import { DiscoverPodcasts } from './components/discover/DiscoverPodcasts';  // Updated route
+import { DiscoverPodcasts } from './components/discover/DiscoverPodcasts';
 import { Learn } from './components/user/Learn';
 import { Rewards } from './components/user/Rewards';
 import { Favorites } from './components/user/Favorites';
@@ -30,6 +31,7 @@ import { RevenueManagementPanel } from './components/admin/RevenueManagementPane
 import { SupportPanel } from './components/admin/SupportPanel';
 import { ChannelPage } from './pages/ChannelPage';
 import { Discover } from './components/user/Discover';
+import { PodcasterProfile } from './pages/podcaster/PodcasterProfile';
 
 function AppRoutes() {
   const { user, loading, fetchUser } = useAuth();
@@ -94,17 +96,17 @@ function AppRoutes() {
           <Route path="/podcaster/engagement" element={<EngagementPanel />} />
           <Route path="/podcaster/settings" element={<ProfileSettingsPanel />} />
           <Route path="/podcaster/live" element={<LiveSessionPanel />} />
+          <Route path="/podcasters/:id" element={<PodcasterProfile  />} />
 
           {/* User Routes */}
           <Route path="/user" element={user ? <Home /> : <Navigate to="/signin" />} />
-          <Route path="/user/discover" element={user ? <Discover /> : <Navigate to="/signin" />} />  {/* Updated route */}
+          <Route path="/user/discover" element={user ? <Discover /> : <Navigate to="/signin" />} />
           <Route path="/user/learn" element={user ? <Learn /> : <Navigate to="/signin" />} />
           <Route path="/user/rewards" element={user ? <Rewards /> : <Navigate to="/signin" />} />
           <Route path="/user/favorites" element={user ? <Favorites /> : <Navigate to="/signin" />} />
           <Route path="/user/history" element={user ? <History /> : <Navigate to="/signin" />} />
           <Route path="/profile" element={user ? <Profile /> : <Navigate to="/signin" />} />
           <Route path="/settings" element={user ? <Settings /> : <Navigate to="/signin" />} />
-
 
           <Route path="/channels/:id" element={<ChannelPage />} />
         </Routes>

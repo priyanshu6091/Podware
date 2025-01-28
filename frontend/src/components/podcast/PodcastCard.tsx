@@ -1,3 +1,4 @@
+// components/podcast/PodcastCard.tsx
 import React from 'react';
 import { Play, Heart } from 'lucide-react';
 

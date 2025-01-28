@@ -1,9 +1,14 @@
 export interface User {
-  id: string;
-  name: string;
-  avatar?: string;
-  coins: number;
-  isCreator: boolean;
+  _id: any;
+  fullname: {
+    firstname: string;
+    lastname: string;
+  };
+  metadata: {
+    bio: string;
+    avatar_url: string;
+  };
+  podcasts: Podcast[];
 }
 
 export interface Question {
@@ -20,17 +25,15 @@ export interface Question {
 }
 
 export interface Podcast {
-  videoUrl: any;
-  audioUrl: any;
-  categories: any;
-  id: string;
+  _id: string;
   title: string;
-  host: string;
-  thumbnail: string;
+  description: string;
+  audioUrl: string;
+  videoUrl: string;
+  thumbnailUrl: string;
   duration: string;
-  likes: number;
-  description?: string;
-  category?: string;
+  categories: string[];
+  uploadedBy: User;
 }
 
 // Updated PodcastEpisode to extend Podcast
