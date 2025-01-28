@@ -9,6 +9,7 @@ const episodeRoutes = require('./routes/episode.routes');
 const rewardRoutes = require('./routes/reward.routes');
 const questionRoutes = require('./routes/question.routes');
 const reelRoutes = require('./routes/reel.routes');
+const podcasterRoutes=require('./routes/podcaster.routes')
 const dotenv = require('dotenv')
 const cors = require('cors');
 const path = require('path');
@@ -35,7 +36,9 @@ app.use('/api/podcasts', podcastRoutes);
 app.use('/api/episodes', episodeRoutes);
 app.use('/api/rewards', rewardRoutes);
 app.use('/api/questions', questionRoutes);
-app.use('/api/reels', reelRoutes);app.use(
+app.use('/api/reels', reelRoutes);
+app.use('/api/podcasters', podcasterRoutes);
+app.use(
     '/uploads',
     express.static(path.join(__dirname, 'uploads'), {
       setHeaders: (res, filePath) => {

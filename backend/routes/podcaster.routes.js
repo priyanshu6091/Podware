@@ -25,5 +25,6 @@ router.get('/profile', authorize(['Podcaster']), podcasterController.getPodcaste
 
 router.get('/logout', authorize(['Podcaster']), podcasterController.logoutPodcaster);
 
-
+router.get('/:id', podcasterController.getPodcasterProfile);
+router.get('/', podcasterController.getAllPodcasters);
 module.exports = router;

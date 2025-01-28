@@ -1,6 +1,22 @@
 const Podcast = require('../models/podcast.model');
 const LiveSession = require('../models/liveSession.model');
 const ScheduledEpisode = require('../models/ScheduledEpisode.model');
+const Podcaster = require('../models/podcaster.model');
+
+exports.getPodcasterProfile = async (req, res) => {
+  const podcasterId = req.params.id;
+
+  try {
+    const podcaster = await Podcaster.findById(podcasterId).populate('metadata');
+    if (!podcaster) return res.status(404).json({ message: 'Podcaster not found' });
+
+    const podcasts = await Podcast.find({ uploadedBy: podcasterId }).populate('uploadedBy', 'fullname');
+
+    res.status(200).json({ podcaster, podcasts });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching podcaster profile', error: error.message });
+  }
+};
 // Upload a podcast
 exports.uploadPodcast = async (req, res) => {
   const { title, description, duration, categories } = req.body;

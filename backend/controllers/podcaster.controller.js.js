@@ -1,8 +1,8 @@
-const podcasterModel = require('../models/podcaster.model');
+const podcasterModel = require('../models/podcaster.model.js');
 const userService = require('../services/podcaster.service.js');
 const { validationResult } = require('express-validator');
 const blackListTokenModel = require('../models/blackListToken.model');
-
+const podcastModel = require('../models/podcast.model.js');
 module.exports.registerPodcaster = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -58,9 +58,32 @@ module.exports.loginPodcaster = async (req, res, next) => {
     res.status(200).json({ token, podcaster });
 };
 
+
 exports.getPodcasterProfile = async (req, res) => {
-    res.status(200).json(req.user); // `req.user` is set by middleware
+  const podcasterId = req.params.id;
+
+  try {
+    const podcaster = await podcasterModel.findById(podcasterId).populate('metadata');
+    if (!podcaster) return res.status(404).json({ message: 'Podcaster not found' });
+
+    const podcasts = await podcastModel.find({ uploadedBy: podcasterId }).populate('uploadedBy', 'fullname');
+
+    res.status(200).json({ podcaster, podcasts });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching podcaster profile', error: error.message });
+  }
 };
+
+
+exports.getAllPodcasters = async (req, res) => {
+    try {
+      const podcasters = await podcasterModel.find().populate('metadata');
+    //   console.log(podcasters,"podcasters")
+      res.status(200).json(podcasters);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching podcasters', error: error.message });
+    }
+  };
 
 exports.createPodcast = async (req, res) => {
     const { title, description } = req.body;

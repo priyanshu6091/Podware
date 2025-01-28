@@ -11,6 +11,7 @@ const {
   getAllPodcasts
 } = require('../controllers/podcast.controller');
 const auth = require('../middlewares/auth');
+const podcasterController = require('../controllers/podcaster.controller.js');
 const router = express.Router();
 
 // Configure multer for audio file uploads
@@ -57,5 +58,5 @@ router.post('/live/end', auth.authenticate, endLiveSession);
 
 // Batch edit episodes
 router.put('/batch-edit', auth.authenticate, batchEditEpisodes);
-
+router.get('/:id', podcasterController.getPodcasterProfile);
 module.exports = router;
