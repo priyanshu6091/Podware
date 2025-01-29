@@ -16,7 +16,7 @@ export function VideoPlayerPage() {
     const fetchVideoDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/videos/${videoId}`);
-        console.log(response.data)
+        console.log(response.data.videoUrl)
         setVideoData(response.data);
       } catch (error) {
         console.error('Error fetching video details:', error);
@@ -27,22 +27,16 @@ export function VideoPlayerPage() {
   }, [videoId]);
 
   if (!videoData) return <p>Loading video...</p>;
-
+  const finalUrl='http://localhost:5000'+videoData.videoUrl;
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-       <ReactPlayer
-              url={videoData.videoUrl}
-              controls
-              width="100%"
-              height="100%"
-              className="rounded-lg"
-              config={{
-                file: {
-                  attributes: { type: 'video/x-matroska' } // MKV MIME type
-                }
-              }}
-              onError={(e) => console.error('Error playing video:', e)}
-            />
+      <ReactPlayer
+        url={finalUrl}
+        controls
+        width="100%"
+        height="480px"
+        className="rounded-lg shadow-lg"
+      />
       <h1 className="text-2xl font-bold mt-4">{videoData.title}</h1>
       <p className="text-gray-600 mt-2">{videoData.description}</p>
     </div>
